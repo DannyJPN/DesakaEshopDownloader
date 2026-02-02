@@ -72,7 +72,7 @@ public sealed class EfMemoryService : IMemoryService
     public async Task<IReadOnlyList<MemoryEntryDTO>> SearchAsync(MemorySearchRequestDTO request, CancellationToken cancellationToken = default)
     {
         var type = ResolveType(request.MemoryType);
-        var set = _db.Set(type).AsQueryable();
+        var set = QuerySet(type);
 
         var query = request.Query ?? string.Empty;
         var keyProp = type.GetProperty("Key");
@@ -144,7 +144,7 @@ public sealed class EfMemoryService : IMemoryService
     public async Task<IReadOnlyList<MemoryEntryDTO>> ExportAsync(string memoryType, string? languageCode, CancellationToken cancellationToken = default)
     {
         var type = ResolveType(memoryType);
-        var set = _db.Set(type).AsQueryable();
+        var set = QuerySet(type);
 
         if (!string.IsNullOrWhiteSpace(languageCode) && type.GetProperty("LanguageCode") != null)
         {
@@ -193,6 +193,16 @@ public sealed class EfMemoryService : IMemoryService
         }
 
         throw new InvalidOperationException($"Unknown memory type '{memoryType}'.");
+    }
+
+    private IQueryable<object> QuerySet(Type type)
+    {
+        var method = typeof(DbContext).GetMethods()
+            .First(m => m.Name == nameof(DbContext.Set)
+                && m.IsGenericMethodDefinition
+                && m.GetParameters().Length == 0);
+        var set = method.MakeGenericMethod(type).Invoke(_db, null);
+        return ((IQueryable)set!).Cast<object>();
     }
 
     private static MemoryEntryDTO ToDto(object entity)
