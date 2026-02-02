@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Desaka.App.MainPage"
+             Title="DESAKA">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+            <Label Text="DESAKA"
+                   FontSize="28"
+                   FontAttributes="Bold" />
+            <Label Text="Kontrolní panel"
+                   FontSize="16"
+                   TextColor="#4c4c4c" />
+
+            <Frame BorderColor="#d0d0d0" CornerRadius="12" Padding="16">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Rychlé akce" FontAttributes="Bold" />
+                    <Button Text="Spustit WebScrape" />
+                    <Button Text="Spustit Autopoll" />
+                    <Button Text="Spustit Unifier" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame BorderColor="#d0d0d0" CornerRadius="12" Padding="16">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Navigace" FontAttributes="Bold" />
+                    <Button Text="Konfigurace" />
+                    <Button Text="Memory" />
+                    <Button Text="Approval Queue" />
+                    <Button Text="Logy" />
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
