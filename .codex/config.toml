@@ -1,0 +1,5 @@
+# Codex project config (template)
+# Replace <PROJECT_ROOT> with the absolute path where this folder is copied.
+
+[projects."H:\\Programs\\C#\\DesakaEshopDownloader"]
+trust_level = "trusted"
