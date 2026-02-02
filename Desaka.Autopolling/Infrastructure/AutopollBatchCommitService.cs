@@ -59,9 +59,9 @@ public sealed class AutopollBatchCommitService
 
         await _db.SaveChangesAsync(cancellationToken);
         var exportRoot = await ResolvePathAsync("paths.autopoll_reports_root", "data/autopoll", cancellationToken);
-        var mapped = toApply.Select(MapSnapshot).ToList();
+        var exportItems = toApply.Select(MapSnapshot).ToList();
 
-        var export = await _exportService.ExportProductsAsync(mapped, new Desaka.Export.ExportOptions
+        var export = await _exportService.ExportProductsAsync(exportItems, new Desaka.Export.ExportOptions
         {
             OutputDirectory = exportRoot,
             Format = Desaka.Export.ExportFormat.Csv,
