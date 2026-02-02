@@ -18,13 +18,13 @@ public sealed class EfConfigService : IConfigService
         _protector = protector;
     }
 
-    public async Task<IReadOnlyList<EshopConfigDto>> GetEshopsAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<EshopConfigDTO>> GetEshopsAsync(CancellationToken cancellationToken = default)
     {
         var items = await _db.ConfigEshops.AsNoTracking().ToListAsync(cancellationToken);
         return items.Select(Map).ToList();
     }
 
-    public async Task<EshopConfigDto> UpsertEshopAsync(EshopConfigDto eshop, CancellationToken cancellationToken = default)
+    public async Task<EshopConfigDTO> UpsertEshopAsync(EshopConfigDTO eshop, CancellationToken cancellationToken = default)
     {
         ConfigEshop entity;
         if (eshop.Id == 0)
@@ -66,13 +66,13 @@ public sealed class EfConfigService : IConfigService
         return true;
     }
 
-    public async Task<IReadOnlyList<AutopollRuleConfigDto>> GetAutopollRulesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<AutopollRuleConfigDTO>> GetAutopollRulesAsync(CancellationToken cancellationToken = default)
     {
         var items = await _db.ConfigAutopollRules.AsNoTracking().ToListAsync(cancellationToken);
         return items.Select(Map).ToList();
     }
 
-    public async Task<AutopollRuleConfigDto> UpsertAutopollRuleAsync(AutopollRuleConfigDto rule, CancellationToken cancellationToken = default)
+    public async Task<AutopollRuleConfigDTO> UpsertAutopollRuleAsync(AutopollRuleConfigDTO rule, CancellationToken cancellationToken = default)
     {
         ConfigAutopollRule entity;
         if (rule.Id == 0)
@@ -116,10 +116,10 @@ public sealed class EfConfigService : IConfigService
         return true;
     }
 
-    public async Task<PathsConfigDto> GetPathsAsync(CancellationToken cancellationToken = default)
+    public async Task<PathsConfigDTO> GetPathsAsync(CancellationToken cancellationToken = default)
     {
         var settings = await _db.ConfigSettings.AsNoTracking().ToListAsync(cancellationToken);
-        return new PathsConfigDto(
+        return new PathsConfigDTO(
             GetSetting(settings, "paths.output_root"),
             GetSetting(settings, "paths.raw_root"),
             GetSetting(settings, "paths.images_root"),
@@ -129,7 +129,7 @@ public sealed class EfConfigService : IConfigService
             GetSetting(settings, "paths.temp_root"));
     }
 
-    public async Task<PathsConfigDto> UpdatePathsAsync(PathsConfigDto paths, CancellationToken cancellationToken = default)
+    public async Task<PathsConfigDTO> UpdatePathsAsync(PathsConfigDTO paths, CancellationToken cancellationToken = default)
     {
         await UpsertSettingAsync("paths.output_root", paths.OutputRoot, cancellationToken);
         await UpsertSettingAsync("paths.raw_root", paths.RawRoot, cancellationToken);
@@ -141,13 +141,13 @@ public sealed class EfConfigService : IConfigService
         return paths;
     }
 
-    public async Task<IReadOnlyList<LanguageConfigDto>> GetLanguagesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<LanguageConfigDTO>> GetLanguagesAsync(CancellationToken cancellationToken = default)
     {
         var items = await _db.ConfigLanguages.AsNoTracking().ToListAsync(cancellationToken);
-        return items.Select(x => new LanguageConfigDto(x.Code, x.Name ?? string.Empty, x.IsEnabled, x.IsDefault)).ToList();
+        return items.Select(x => new LanguageConfigDTO(x.Code, x.Name ?? string.Empty, x.IsEnabled, x.IsDefault)).ToList();
     }
 
-    public async Task<LanguageConfigDto> UpsertLanguageAsync(LanguageConfigDto language, CancellationToken cancellationToken = default)
+    public async Task<LanguageConfigDTO> UpsertLanguageAsync(LanguageConfigDTO language, CancellationToken cancellationToken = default)
     {
         var entity = await _db.ConfigLanguages.FirstOrDefaultAsync(x => x.Code == language.Code, cancellationToken)
             ?? new ConfigLanguage();
@@ -166,13 +166,13 @@ public sealed class EfConfigService : IConfigService
         return language;
     }
 
-    public async Task<IReadOnlyList<AiConfigDto>> GetAiConfigsAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<AiConfigDTO>> GetAiConfigsAsync(CancellationToken cancellationToken = default)
     {
         var items = await _db.ConfigAiProviderAssignments.AsNoTracking().ToListAsync(cancellationToken);
-        return items.Select(x => new AiConfigDto(x.TaskName, x.ProviderId, x.ModelName, _protector.Unprotect(x.ApiKeyEncrypted), x.IsEnabled)).ToList();
+        return items.Select(x => new AiConfigDTO(x.TaskName, x.ProviderId, x.ModelName, _protector.Unprotect(x.ApiKeyEncrypted), x.IsEnabled)).ToList();
     }
 
-    public async Task<AiConfigDto> UpsertAiConfigAsync(AiConfigDto config, CancellationToken cancellationToken = default)
+    public async Task<AiConfigDTO> UpsertAiConfigAsync(AiConfigDTO config, CancellationToken cancellationToken = default)
     {
         var entity = await _db.ConfigAiProviderAssignments.FirstOrDefaultAsync(x => x.TaskName == config.TaskName, cancellationToken)
             ?? new ConfigAiProviderAssignment();
@@ -192,16 +192,16 @@ public sealed class EfConfigService : IConfigService
         return config;
     }
 
-    private static EshopConfigDto Map(ConfigEshop entity)
+    private static EshopConfigDTO Map(ConfigEshop entity)
         => new(entity.Id, entity.Name, entity.BaseUrl, entity.IsEnabled, entity.DownloadSchedule, entity.PriceListSource, entity.LanguageFlags);
 
-    private static AutopollRuleConfigDto Map(ConfigAutopollRule entity)
+    private static AutopollRuleConfigDTO Map(ConfigAutopollRule entity)
     {
         var intervalUnit = Enum.TryParse<IntervalUnit>(entity.IntervalUnit, true, out var parsed)
             ? parsed
             : IntervalUnit.Hour;
 
-        return new AutopollRuleConfigDto(entity.Id, entity.Name, entity.IsEnabled, entity.EshopId, entity.IntervalValue, intervalUnit, entity.WindowStart, entity.WindowEnd, entity.FilterDefinition);
+        return new AutopollRuleConfigDTO(entity.Id, entity.Name, entity.IsEnabled, entity.EshopId, entity.IntervalValue, intervalUnit, entity.WindowStart, entity.WindowEnd, entity.FilterDefinition);
     }
 
     private static string GetSetting(IEnumerable<ConfigSetting> settings, string key)
