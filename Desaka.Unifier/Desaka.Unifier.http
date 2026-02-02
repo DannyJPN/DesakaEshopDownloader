@@ -1,0 +1,6 @@
+@Desaka.Unifier_HostAddress = http://localhost:5018
+
+GET {{Desaka.Unifier_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

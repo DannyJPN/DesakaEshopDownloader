@@ -1,0 +1,6 @@
+@Desaka.Notification_HostAddress = http://localhost:5255
+
+GET {{Desaka.Notification_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

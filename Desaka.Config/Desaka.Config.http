@@ -1,0 +1,6 @@
+@Desaka.Config_HostAddress = http://localhost:5101
+
+GET {{Desaka.Config_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

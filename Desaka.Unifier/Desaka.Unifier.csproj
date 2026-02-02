@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Desaka.Contracts\Desaka.Contracts.csproj" />
+    <ProjectReference Include="..\Desaka.DataAccess\Desaka.DataAccess.csproj" />
+    <ProjectReference Include="..\Desaka.EventBus\Desaka.EventBus.csproj" />
+    <ProjectReference Include="..\Desaka.Export\Desaka.Export.csproj" />
+    <ProjectReference Include="..\Desaka.ServiceDefaults\Desaka.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,6 @@
+@Desaka.AI_HostAddress = http://localhost:5083
+
+GET {{Desaka.AI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

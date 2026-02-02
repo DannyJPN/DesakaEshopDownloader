@@ -1,0 +1,6 @@
+@Desaka.Memory_HostAddress = http://localhost:5285
+
+GET {{Desaka.Memory_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
