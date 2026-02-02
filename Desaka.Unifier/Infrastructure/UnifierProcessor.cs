@@ -2,6 +2,9 @@ using Desaka.DataAccess;
 using Desaka.DataAccess.Entities;
 using Desaka.Unifying.Models;
 using Microsoft.EntityFrameworkCore;
+using DownloadedProductModel = Desaka.Unifying.Models.DownloadedProduct;
+using DownloadedVariantModel = Desaka.Unifying.Models.DownloadedVariant;
+using DownloadedVariantOptionModel = Desaka.Unifying.Models.DownloadedVariantOption;
 
 namespace Desaka.Unifier.Infrastructure;
 
@@ -47,7 +50,7 @@ public sealed class UnifierProcessor
         return new UnifierProcessingResult(UnifierProcessOutcome.Success, products, approvals);
     }
 
-    private async Task<List<DownloadedProduct>> LoadDownloadedProductsAsync(CancellationToken cancellationToken)
+    private async Task<List<DownloadedProductModel>> LoadDownloadedProductsAsync(CancellationToken cancellationToken)
     {
         var products = await _db.DownloadedProducts.AsNoTracking().ToListAsync(cancellationToken);
         var galleries = await _db.DownloadedGalleries.AsNoTracking().ToListAsync(cancellationToken);
@@ -58,10 +61,10 @@ public sealed class UnifierProcessor
         var optionLookup = options.GroupBy(x => x.VariantId).ToDictionary(x => x.Key, x => x.ToList());
         var variantLookup = variants.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.ToList());
 
-        var result = new List<DownloadedProduct>();
+        var result = new List<DownloadedProductModel>();
         foreach (var product in products)
         {
-            var model = new DownloadedProduct
+            var model = new DownloadedProductModel
             {
                 Id = product.Id,
                 EshopId = product.EshopId,
@@ -82,7 +85,7 @@ public sealed class UnifierProcessor
             {
                 foreach (var variant in variantItems)
                 {
-                    var variantModel = new DownloadedVariant
+                    var variantModel = new DownloadedVariantModel
                     {
                         Id = variant.Id,
                         CurrentPrice = variant.CurrentPrice,
@@ -94,7 +97,7 @@ public sealed class UnifierProcessor
                     {
                         foreach (var option in variantOptions)
                         {
-                            variantModel.Options.Add(new DownloadedVariantOption
+                            variantModel.Options.Add(new DownloadedVariantOptionModel
                             {
                                 OptionName = option.OptionName,
                                 OptionValue = option.OptionValue

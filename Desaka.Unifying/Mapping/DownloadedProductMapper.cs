@@ -1,13 +1,18 @@
 using Desaka.DataAccess.Entities;
 using Desaka.Unifying.Models;
+using EntityDownloadedProduct = Desaka.DataAccess.Entities.DownloadedProduct;
+using EntityDownloadedVariant = Desaka.DataAccess.Entities.DownloadedVariant;
+using EntityDownloadedVariantOption = Desaka.DataAccess.Entities.DownloadedVariantOption;
+using EntityDownloadedGallery = Desaka.DataAccess.Entities.DownloadedGallery;
+using ModelDownloadedProduct = Desaka.Unifying.Models.DownloadedProduct;
 
 namespace Desaka.Unifying.Mapping;
 
 public static class DownloadedProductMapper
 {
-    public static DownloadedProduct Map(DownloadedProduct entity, IReadOnlyList<DownloadedGallery> galleries, IReadOnlyList<DownloadedVariant> variants, IReadOnlyList<DownloadedVariantOption> options)
+    public static ModelDownloadedProduct Map(EntityDownloadedProduct entity, IReadOnlyList<EntityDownloadedGallery> galleries, IReadOnlyList<EntityDownloadedVariant> variants, IReadOnlyList<EntityDownloadedVariantOption> options)
     {
-        var product = new DownloadedProduct
+        var product = new ModelDownloadedProduct
         {
             Id = entity.Id,
             EshopId = entity.EshopId,
