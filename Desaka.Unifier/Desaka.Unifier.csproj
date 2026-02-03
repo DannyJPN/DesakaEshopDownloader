@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Desaka.Export\Desaka.Export.csproj" />
     <ProjectReference Include="..\Desaka.ServiceDefaults\Desaka.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Desaka.Unifying\Desaka.Unifying.csproj" />
+    <ProjectReference Include="..\Desaka.Comparation\Desaka.Comparation.csproj" />
   </ItemGroup>
 
 </Project>
