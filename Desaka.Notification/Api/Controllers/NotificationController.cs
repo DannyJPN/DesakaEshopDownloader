@@ -1,54 +1,49 @@
 using System.Text.Json;
-using Desaka.Contracts.Common;
-using Desaka.Contracts.EventBus;
-using Desaka.Contracts.Notify;
-using Desaka.EventBus;
-using Desaka.Notification.Infrastructure;
+using System.Threading.Channels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Desaka.Notification.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/notify")]
-public sealed class NotificationController : ControllerBase
+[Route("api/[controller]")]
+public class NotificationController : ControllerBase
 {
-    private readonly IEventBus _eventBus;
-    private readonly NotificationStream _stream;
+    private static readonly Channel<NotificationEvent> _channel = Channel.CreateUnbounded<NotificationEvent>();
 
-    public NotificationController(IEventBus eventBus, NotificationStream stream)
+    /// <summary>
+    /// Server-Sent Events endpoint for streaming notifications.
+    /// </summary>
+    [HttpGet("stream")]
+    public async Task StreamNotifications(CancellationToken ct)
     {
-        _eventBus = eventBus;
-        _stream = stream;
+        Response.ContentType = "text/event-stream";
+        Response.Headers.Append("Cache-Control", "no-cache");
+        Response.Headers.Append("Connection", "keep-alive");
+
+        try
+        {
+            await foreach (var notification in _channel.Reader.ReadAllAsync(ct))
+            {
+                await Response.WriteAsync($"event: {notification.Type}\n", ct);
+                await Response.WriteAsync($"data: {JsonSerializer.Serialize(notification.Data)}\n\n", ct);
+                await Response.Body.FlushAsync(ct);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Client disconnected
+        }
     }
 
-    [HttpPost("push")]
-    public async Task<IActionResult> Push([FromBody] NotificationRequestDTO request)
+    /// <summary>
+    /// Broadcast a notification to all SSE clients.
+    /// </summary>
+    [HttpPost("broadcast")]
+    public async Task<IActionResult> Broadcast([FromBody] NotificationEvent notification, CancellationToken ct)
     {
-        var envelope = new EventEnvelope(
-            request.EventType,
-            "Notification",
-            DateTime.UtcNow,
-            request.CorrelationId,
-            JsonSerializer.Serialize(request));
-
-        await _eventBus.PublishAsync(envelope, HttpContext.RequestAborted);
+        await _channel.Writer.WriteAsync(notification, ct);
         return Ok();
     }
 
-    [HttpGet("status")]
-    public ActionResult<NotificationStatusResponseDTO> Status() => Ok(new NotificationStatusResponseDTO(true, Array.Empty<string>()));
-
-    [HttpGet("stream")]
-    public async Task Stream(CancellationToken cancellationToken)
-    {
-        Response.Headers["Content-Type"] = "text/event-stream";
-
-        await foreach (var notification in _stream.ReadAllAsync(cancellationToken))
-        {
-            var json = JsonSerializer.Serialize(notification);
-            await Response.WriteAsync($"data: {json}\n\n", cancellationToken);
-            await Response.Body.FlushAsync(cancellationToken);
-        }
-    }
+    public record NotificationEvent(string Type, object Data);
 }
-
